@@ -1,0 +1,16 @@
+apiVersion: configexport.kraken-iac.eoinfennessy.com/v1alpha1
+kind: ConfigExport
+metadata:
+  name: configexport-b
+spec:
+  configType: Secret
+  configMetadata:
+    name: secret-a
+    namespace: default
+  entries:
+    - key: my-instance-id
+      valueFrom:
+        krakenResource:
+          kind: ec2instance
+          name: ec2instance-b
+          path: instances.0.InstanceId

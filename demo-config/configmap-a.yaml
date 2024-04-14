@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: configmap-a
+data:
+  imageID: "ami-0277155c3f0ab2930"
+  maxCount: "1"

@@ -1,0 +1,22 @@
+apiVersion: configexport.kraken-iac.eoinfennessy.com/v1alpha1
+kind: ConfigExport
+metadata:
+  name: configexport-a
+spec:
+  configType: ConfigMap
+  configMetadata:
+    name: configmap-b
+    namespace: default
+  entries:
+    - key: my-vpc-id
+      valueFrom:
+        krakenResource:
+          kind: ec2instance
+          name: ec2instance-a
+          path: instances.0.NetworkInterfaces.0.VpcId
+    - key: my-subnet-id
+      valueFrom:
+        krakenResource:
+          kind: ec2instance
+          name: ec2instance-a
+          path: instances.0.NetworkInterfaces.0.SubnetId
