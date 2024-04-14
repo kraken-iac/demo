@@ -16,7 +16,7 @@ runme:
 
 ## Create Cluster
 
-```sh {"id":"01HTW17VMH3NSECHM79ME36TSH","interactive":"false"}
+```sh {"id":"01HTW17VMH3NSECHM79ME36TSH","interactive":"true"}
 kind create cluster --name kraken-demo
 ```
 
@@ -40,11 +40,7 @@ kubectl wait --for=condition=Available --namespace argocd deployment/argocd-serv
 ```
 
 ```sh {"background":"true","id":"01HTW3MCTTZVMA6Z6F3N32SRQ6","interactive":"true","terminalRows":"2"}
-kubectl port-forward --namespace argocd svc/argocd-server 8080:80
-```
-
-```sh {"id":"01HTW3VRGWXZWP9P07DFT3X1XB","interactive":"true","terminalRows":"1"}
-kubectl get secret --namespace argocd argocd-initial-admin-secret --template={{.data.password}} | base64 -d
+kubectl port-forward --namespace argocd svc/argocd-server 8443:80
 ```
 
 ## Install Core Kraken Components
@@ -150,6 +146,30 @@ kubectl patch configmap configmap-a --patch '{"data":{"maxCount":"2"}}'
 
 ```sh {"id":"01HVCR4EZ7NYCDP8CXNGF4ABZD","interactive":"false"}
 kubectl delete --filename demo-config
+```
+
+## GitOps with ArgoCD
+
+```sh {"id":"01HVE3ZR9S68ZZYGBH1MNXJQCG"}
+argocd_password=$(kubectl get secret --namespace argocd argocd-initial-admin-secret --template={{.data.password}} | base64 -d)
+
+argocd login 127.0.0.1:8443 \
+  --username admin \
+  --password ${argocd_password} \
+  --insecure
+
+echo "ArgoCD Password: $argocd_password"
+```
+
+```sh {"id":"01HVE22CP3FCWSN7BTZE92M5WG"}
+kubectl config set-context --current --namespace argocd
+argocd app create my-infra \
+  --repo https://github.com/kraken-iac/demo.git \
+  --path demo-config \
+  --dest-server https://kubernetes.default.svc \
+  --dest-namespace default \
+  --server 127.0.0.1:8443 \
+  --insecure
 ```
 
 ## Cleanup
